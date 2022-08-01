@@ -1,11 +1,12 @@
 const express = require('express');
 const app = express();
-const port = 5000;
+const port = 5003;
 const middleware = require('./middleware')
 const path = require('path')
 const bodyParser = require("body-parser")
 const mongoose = require("./database");
 const session = require("express-session");
+// const MongoStore = require('connect-mongo')(session);
 
 const server = app.listen(port, () => console.log("Server listening on port " + port));
 // const io = require("socket.io")(server, { pingTimeout: 60000 });
@@ -26,11 +27,19 @@ app.set("views", "views");
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
 
+app.set('trust proxy', 1) // trust first proxy
 app.use(session({
-    secret: "bbq chips",
-    resave: true,
-    saveUninitialized: false
+  secret: 'keyboard cat',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: true }
 }))
+// app.use(session({
+//     secret: "bbq chips",
+//     resave: true,
+//     // store: new MongoStore(options),
+//     saveUninitialized: false
+// }))
 
 // Routes
 const loginRoute = require('./routes/loginRoutes');
