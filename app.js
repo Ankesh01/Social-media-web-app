@@ -5,7 +5,8 @@ const middleware = require('./middleware')
 const path = require('path')
 const bodyParser = require("body-parser")
 const mongoose = require("./database");
-const session = require("express-session");
+// const session = require("express-session");
+var session = require('cookie-session');
 // const MongoStore = require('connect-mongo')(session);
 
 const server = app.listen(port, () => console.log("Server listening on port " + port));
@@ -27,18 +28,25 @@ app.set("views", "views");
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
 
-
 app.set('trust proxy', 1);
 
 app.use(session({
+cookie:{
+    secure: true,
+    maxAge:60000
+       },
+store: new RedisStore(),
 secret: 'secret',
 saveUninitialized: true,
-resave: false,
-maxAge: 1000 * 60 * 15,
-cookie:{
-    secure: true
-       }
+resave: false
 }));
+
+app.use(function(req,res,next){
+if(!req.session){
+    return next(new Error('Oh no')) //handle error
+}
+next() //otherwise continue
+});
 
 // app.use(session({
 //     secret: "bbq chips",
