@@ -27,13 +27,19 @@ app.set("views", "views");
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
 
-app.set('trust proxy', 1) // trust first proxy
+
+app.set('trust proxy', 1);
+
 app.use(session({
-  secret: 'keyboard cat',
-  resave: false,
-  saveUninitialized: true,
-  cookie: { secure: true }
-}))
+secret: 'secret',
+saveUninitialized: true,
+resave: false,
+maxAge: 1000 * 60 * 15,
+cookie:{
+    secure: true
+       }
+}));
+
 // app.use(session({
 //     secret: "bbq chips",
 //     resave: true,
